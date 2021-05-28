@@ -3,37 +3,37 @@ import api from "../api";
 import { routeActions } from "./route.actions";
 import { toast } from "react-toastify";
 
-const postsRequest = (
-  pageNum = 1,
-  limit = 10,
-  query = null,
-  ownerId = null,
-  sortBy = null
-) => async (dispatch) => {
-  dispatch({ type: types.POST_REQUEST, payload: null });
-  try {
-    let queryString = "";
-    if (query) {
-      queryString = `&title[$regex]=${query}&title[$options]=i`;
+const postsRequest =
+  (pageNum = 1, limit = 10, query = null, ownerId = null, sortBy = null) =>
+  async (dispatch) => {
+    dispatch({ type: types.POST_REQUEST, payload: null });
+    try {
+      let queryString = "";
+      if (query) {
+        queryString = `&title[$regex]=${query}&title[$options]=i`;
+      }
+      if (ownerId) {
+        queryString = `${queryString}&author=${ownerId}`;
+      }
+      let sortByString = "";
+      if (sortBy?.key) {
+        sortByString = `&sortBy[${sortBy.key}]=${sortBy.ascending}`;
+      }
+      const res = await api.get(
+        `/posts?page=${pageNum}&limit=${limit}${queryString}${sortByString}`
+      
+      );
+
+      dispatch({
+        type: types.POST_REQUEST_SUCCESS,
+        payload: res.data.data.posts,
+      });
+              
+
+    } catch (error) {
+      dispatch({ type: types.POST_REQUEST_FAILURE, payload: error });
     }
-    if (ownerId) {
-      queryString = `${queryString}&author=${ownerId}`;
-    }
-    let sortByString = "";
-    if (sortBy?.key) {
-      sortByString = `&sortBy[${sortBy.key}]=${sortBy.ascending}`;
-    }
-    const res = await api.get(
-      `/posts?page=${pageNum}&limit=${limit}${queryString}${sortByString}`
-    );
-    dispatch({
-      type: types.POST_REQUEST_SUCCESS,
-      payload: res.data.data,
-    });
-  } catch (error) {
-    dispatch({ type: types.POST_REQUEST_FAILURE, payload: error });
-  }
-};
+  };
 
 const getSinglePost = (postId) => async (dispatch) => {
   dispatch({ type: types.GET_SINGLE_POST_REQUEST, payload: null });
@@ -64,7 +64,7 @@ const createReview = (postId, reviewText) => async (dispatch) => {
 };
 
 const createPost = (body, images) => async (dispatch) => {
-  dispatch({ type: types.CREATE_POST_REQUEST, payload: null });
+  dispatch({ type: types.CREATE_POST_REQUEST, payload: {body } });
   try {
     // For uploading file manually
     // const formData = new FormData();
@@ -81,8 +81,8 @@ const createPost = (body, images) => async (dispatch) => {
     const res = await api.post("/posts", { body, images });
 
     dispatch({
-      payload: res.data.data,
       type: types.CREATE_POST_SUCCESS,
+      payload: res.data.data.posts,
     });
     dispatch(routeActions.redirect("__GO_BACK__"));
     toast.success("Post created");

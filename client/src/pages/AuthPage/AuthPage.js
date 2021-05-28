@@ -23,7 +23,7 @@ export default function RegisterPage() {
   const dispatch = useDispatch();
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 
-  const [user, setUser] = useState({ email: "", password: "" });
+  const [user, setUser] = useState({ name: "", email: "", password: "" });
   const [show, setShow] = useState(false);
 
   const onToggleModal = (e) => {
@@ -34,6 +34,10 @@ export default function RegisterPage() {
   const onLogin = (e) => {
     e.preventDefault();
     dispatch(authActions.loginRequest(user.email, user.password));
+  };
+  const onSubmit = (e) => {
+    e.preventDefault();
+    dispatch(authActions.register(user.name, user.email, user.password));
   };
 
   const onChange = (e) => {
@@ -125,20 +129,30 @@ export default function RegisterPage() {
         </Modal.Header>
         <Modal.Body>
           {/* STEP 1 */}
-          <Form className="d-flex flex-column justify-content-center">
+          <Form
+            onSubmit={onSubmit}
+            className="d-flex flex-column justify-content-center"
+          >
             <Form.Row>
               <Form.Group as={Col} controlId="email">
                 <Form.Label>Email</Form.Label>
+                <Form.Control type="email" placeholder="Enter email" onChange={ onChange}/>
+              </Form.Group>
+              <Form.Group as={Col} controlId="name">
+                <Form.Label>Name</Form.Label>
                 <Form.Control
-                  type="email"
-                  placeholder="Enter email"
+                          type="text"
+                      placeholder="enter name"
+                      onChange={onChange}
                 />
               </Form.Group>
+
               <Form.Group as={Col} controlId="password">
                 <Form.Label>Password</Form.Label>
                 <Form.Control
                   type="password"
                   placeholder="Password"
+                  onChange={onChange}
                 />
               </Form.Group>
             </Form.Row>
@@ -147,7 +161,22 @@ export default function RegisterPage() {
               Cookie Policy. You may receive SMS notifications from us and can
               opt out at any time.
             </p>
-            <Button className="mx-auto w-50" variant="primary" type="submit">
+            <Button
+      
+                                  onClick={onSubmit}
+   
+   
+                                                      className="mx-auto w-50"
+      
+      
+                                          variant="primary"
+         
+                              type="submit"
+            
+            
+            
+            
+            >
               Sign Up
             </Button>
           </Form>

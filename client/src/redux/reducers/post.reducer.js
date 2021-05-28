@@ -11,7 +11,16 @@ const postReducer = (state = initialState, action) => {
   const { type, payload } = action;
   switch (type) {
     case types.POST_REQUEST:
+      return {
+        ...state,
+        loading: true,
+      };
     case types.CREATE_POST_REQUEST:
+      return {
+        ...state,
+        loading: false,
+        posts: payload.posts,
+      };
     case types.UPDATE_POST_REQUEST:
     case types.DELETE_POST_REQUEST:
     case types.GET_SINGLE_POST_REQUEST:
@@ -36,9 +45,13 @@ const postReducer = (state = initialState, action) => {
       };
 
     case types.CREATE_POST_FAILURE:
+      return state;
     case types.UPDATE_POST_FAILURE:
+      return state; 
     case types.DELETE_POST_FAILURE:
+      return state; 
     case types.POST_REQUEST_FAILURE:
+      return state; 
     case types.GET_SINGLE_POST_REQUEST_FAILURE:
       return { ...state, loading: false };
 
@@ -46,6 +59,8 @@ const postReducer = (state = initialState, action) => {
       return {
         ...state,
         loading: false,
+        posts: payload,
+        totalPageNum: payload.totalPages,
       };
 
     case types.DELETE_POST_SUCCESS:
